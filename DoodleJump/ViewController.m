@@ -9,7 +9,7 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-
+@property (nonatomic, strong) CADisplayLink *displayLink;
 @end
 
 @implementation ViewController
@@ -17,6 +17,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
+    _displayLink = [CADisplayLink displayLinkWithTarget:_gameView selector:@selector(arrange:)];
+    [_displayLink setPreferredFramesPerSecond:60];
+    [_displayLink addToRunLoop:[NSRunLoop mainRunLoop] forMode:NSDefaultRunLoopMode];
 }
 
 
@@ -25,5 +28,10 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (IBAction)speedChange:(id)sender {
+    UISlider *s = (UISlider *)sender;
+    // NSLog(@"tilt %f", (float)[s value]);
+    [_gameView setTilt:(float)[s value]];
+}
 
 @end

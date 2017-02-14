@@ -15,6 +15,9 @@
 		C0A13E631E4D15C50085D503 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C0A13E611E4D15C50085D503 /* LaunchScreen.storyboard */; };
 		C0A13E6E1E4D15C50085D503 /* DoodleJumpTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A13E6D1E4D15C50085D503 /* DoodleJumpTests.m */; };
 		C0A13E791E4D15C50085D503 /* DoodleJumpUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A13E781E4D15C50085D503 /* DoodleJumpUITests.m */; };
+		C0A13E881E4D16260085D503 /* Doodle.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A13E871E4D16260085D503 /* Doodle.m */; };
+		C0A13E8B1E4D16360085D503 /* Brick.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A13E8A1E4D16360085D503 /* Brick.m */; };
+		C0A13E8E1E4D16E70085D503 /* GameView.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A13E8D1E4D16E70085D503 /* GameView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +54,12 @@
 		C0A13E741E4D15C50085D503 /* DoodleJumpUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DoodleJumpUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A13E781E4D15C50085D503 /* DoodleJumpUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DoodleJumpUITests.m; sourceTree = "<group>"; };
 		C0A13E7A1E4D15C50085D503 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C0A13E861E4D16260085D503 /* Doodle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Doodle.h; sourceTree = "<group>"; };
+		C0A13E871E4D16260085D503 /* Doodle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Doodle.m; sourceTree = "<group>"; };
+		C0A13E891E4D16360085D503 /* Brick.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Brick.h; sourceTree = "<group>"; };
+		C0A13E8A1E4D16360085D503 /* Brick.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Brick.m; sourceTree = "<group>"; };
+		C0A13E8C1E4D16E70085D503 /* GameView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameView.h; sourceTree = "<group>"; };
+		C0A13E8D1E4D16E70085D503 /* GameView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,10 +114,16 @@
 				C0A13E571E4D15C50085D503 /* AppDelegate.m */,
 				C0A13E591E4D15C50085D503 /* ViewController.h */,
 				C0A13E5A1E4D15C50085D503 /* ViewController.m */,
+				C0A13E861E4D16260085D503 /* Doodle.h */,
+				C0A13E871E4D16260085D503 /* Doodle.m */,
+				C0A13E8C1E4D16E70085D503 /* GameView.h */,
+				C0A13E8D1E4D16E70085D503 /* GameView.m */,
+				C0A13E891E4D16360085D503 /* Brick.h */,
+				C0A13E8A1E4D16360085D503 /* Brick.m */,
 				C0A13E5C1E4D15C50085D503 /* Main.storyboard */,
+				C0A13E641E4D15C50085D503 /* Info.plist */,
 				C0A13E5F1E4D15C50085D503 /* Assets.xcassets */,
 				C0A13E611E4D15C50085D503 /* LaunchScreen.storyboard */,
-				C0A13E641E4D15C50085D503 /* Info.plist */,
 				C0A13E531E4D15C50085D503 /* Supporting Files */,
 			);
 			path = DoodleJump;
@@ -273,8 +288,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0A13E8E1E4D16E70085D503 /* GameView.m in Sources */,
 				C0A13E5B1E4D15C50085D503 /* ViewController.m in Sources */,
 				C0A13E581E4D15C50085D503 /* AppDelegate.m in Sources */,
+				C0A13E8B1E4D16360085D503 /* Brick.m in Sources */,
+				C0A13E881E4D16260085D503 /* Doodle.m in Sources */,
 				C0A13E551E4D15C50085D503 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -507,6 +525,7 @@
 				C0A13E7F1E4D15C50085D503 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C0A13E801E4D15C50085D503 /* Build configuration list for PBXNativeTarget "DoodleJumpTests" */ = {
 			isa = XCConfigurationList;
@@ -515,6 +534,7 @@
 				C0A13E821E4D15C50085D503 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C0A13E831E4D15C50085D503 /* Build configuration list for PBXNativeTarget "DoodleJumpUITests" */ = {
 			isa = XCConfigurationList;
@@ -523,6 +543,7 @@
 				C0A13E851E4D15C50085D503 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
