@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C00C902C1E57D0B10038FF1D /* ViewController2.m in Sources */ = {isa = PBXBuildFile; fileRef = C00C902B1E57D0B10038FF1D /* ViewController2.m */; };
+		C00C902F1E57D8660038FF1D /* ViewController1.m in Sources */ = {isa = PBXBuildFile; fileRef = C00C902E1E57D8660038FF1D /* ViewController1.m */; };
+		C00C90351E57DB6E0038FF1D /* doodie.png in Resources */ = {isa = PBXBuildFile; fileRef = C00C90341E57DB6E0038FF1D /* doodie.png */; };
 		C0A13E551E4D15C50085D503 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A13E541E4D15C50085D503 /* main.m */; };
 		C0A13E581E4D15C50085D503 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A13E571E4D15C50085D503 /* AppDelegate.m */; };
 		C0A13E5B1E4D15C50085D503 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C0A13E5A1E4D15C50085D503 /* ViewController.m */; };
@@ -38,6 +41,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C00C902A1E57D0B10038FF1D /* ViewController2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController2.h; sourceTree = "<group>"; };
+		C00C902B1E57D0B10038FF1D /* ViewController2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController2.m; sourceTree = "<group>"; };
+		C00C902D1E57D8660038FF1D /* ViewController1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController1.h; sourceTree = "<group>"; };
+		C00C902E1E57D8660038FF1D /* ViewController1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController1.m; sourceTree = "<group>"; };
+		C00C90341E57DB6E0038FF1D /* doodie.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = doodie.png; sourceTree = "<group>"; };
 		C0A13E501E4D15C50085D503 /* DoodleJump.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DoodleJump.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0A13E541E4D15C50085D503 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		C0A13E561E4D15C50085D503 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -110,10 +118,15 @@
 		C0A13E521E4D15C50085D503 /* DoodleJump */ = {
 			isa = PBXGroup;
 			children = (
+				C00C90341E57DB6E0038FF1D /* doodie.png */,
 				C0A13E561E4D15C50085D503 /* AppDelegate.h */,
 				C0A13E571E4D15C50085D503 /* AppDelegate.m */,
 				C0A13E591E4D15C50085D503 /* ViewController.h */,
 				C0A13E5A1E4D15C50085D503 /* ViewController.m */,
+				C00C902D1E57D8660038FF1D /* ViewController1.h */,
+				C00C902E1E57D8660038FF1D /* ViewController1.m */,
+				C00C902A1E57D0B10038FF1D /* ViewController2.h */,
+				C00C902B1E57D0B10038FF1D /* ViewController2.m */,
 				C0A13E861E4D16260085D503 /* Doodle.h */,
 				C0A13E871E4D16260085D503 /* Doodle.m */,
 				C0A13E8C1E4D16E70085D503 /* GameView.h */,
@@ -262,6 +275,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0A13E631E4D15C50085D503 /* LaunchScreen.storyboard in Resources */,
+				C00C90351E57DB6E0038FF1D /* doodie.png in Resources */,
 				C0A13E601E4D15C50085D503 /* Assets.xcassets in Resources */,
 				C0A13E5E1E4D15C50085D503 /* Main.storyboard in Resources */,
 			);
@@ -292,6 +306,8 @@
 				C0A13E5B1E4D15C50085D503 /* ViewController.m in Sources */,
 				C0A13E581E4D15C50085D503 /* AppDelegate.m in Sources */,
 				C0A13E8B1E4D16360085D503 /* Brick.m in Sources */,
+				C00C902F1E57D8660038FF1D /* ViewController1.m in Sources */,
+				C00C902C1E57D0B10038FF1D /* ViewController2.m in Sources */,
 				C0A13E881E4D16260085D503 /* Doodle.m in Sources */,
 				C0A13E551E4D15C50085D503 /* main.m in Sources */,
 			);

@@ -15,6 +15,11 @@
 @property (nonatomic, strong) Doodle *jumper;
 @property (nonatomic, strong) NSMutableArray *bricks;
 @property (nonatomic) float tilt;
+@property (nonatomic) NSInteger highScore;
+@property (nonatomic) NSInteger currentScore;
+@property (nonatomic) BOOL infinite;
+@property (strong, nonatomic) IBOutlet UILabel *scoreLabel;
+@property (strong, nonatomic) IBOutlet UILabel *highScoreLabel;
 -(void)arrange:(CADisplayLink *)sender;
 
 @end

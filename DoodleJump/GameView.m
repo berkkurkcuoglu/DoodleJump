@@ -11,6 +11,7 @@
 
 NSInteger counter;
 
+
 @implementation GameView
 
 @synthesize jumper, bricks;
@@ -29,6 +30,12 @@ NSInteger counter;
 {
     self = [super initWithCoder:aDecoder];
     counter = 0;
+    _scoreLabel.adjustsFontSizeToFitWidth = YES;
+    _scoreLabel.minimumScaleFactor = 0.4;
+    _highScoreLabel.adjustsFontSizeToFitWidth = YES;
+    _highScoreLabel.minimumScaleFactor = 0.4;
+    [_highScoreLabel setText:[NSString stringWithFormat:@"Best: %ld",_highScore]];
+    [self updateScore];
     if (self)
     {
         CGRect bounds = [self bounds];
@@ -43,12 +50,22 @@ NSInteger counter;
     return self;
 }
 
+-(void)updateScore{
+    if(_currentScore > _highScore){
+        _highScore = _currentScore;
+        if(_infinite)
+            [[NSUserDefaults standardUserDefaults] setInteger:_highScore forKey:@"doodleInfiniteHighScore"];
+        else
+            [[NSUserDefaults standardUserDefaults] setInteger:_highScore forKey:@"doodleHighScore"];
+    }
+    [_scoreLabel setText:[NSString stringWithFormat:@"Score: %ld",_currentScore]];
+    [_highScoreLabel setText:[NSString stringWithFormat:@"Best: %ld",_highScore]];
+}
 -(IBAction)makeBricks:(id)sender
 {
-    CGRect bounds = [self bounds];
-    float width = bounds.size.width * .2;
-    float height = 20;
-    
+    //CGRect bounds = [self bounds];
+    //float width = bounds.size.width * .2;
+    //float height = 20;
     if (bricks)
     {
         for (Brick *brick in bricks)
@@ -58,19 +75,72 @@ NSInteger counter;
     }
     
     bricks = [[NSMutableArray alloc] init];
-    for (int i = 0; i < 10; ++i)
+    for (int i = 0; i < 12; ++i)
     {
-        Brick *b = [[Brick alloc] initWithFrame:CGRectMake(0, 0, width, height)];
-        [b setBackgroundColor:[UIColor blueColor]];
-        [self addSubview:b];
-        [b setCenter:CGPointMake(rand() % (int)(bounds.size.width * .8), rand() % (int)(bounds.size.height * .8))];
-        [bricks addObject:b];
+        [self addBrick];
     }
 }
 
+-(void)addBrick{
+    CGRect bounds = [self bounds];
+    Brick *b = [[Brick alloc] initWithFrame:CGRectMake(0, 0,(int)(bounds.size.width * .2), 20)];
+    //[b setBackgroundColor:[UIColor colorWithRed:153.0/255.0 green:254.0/255.0 blue:0/255.0 alpha:1.0]];
+    UIGraphicsBeginImageContext(b.frame.size);
+    [[UIImage imageNamed:@"doodie.png"] drawInRect:b.frame];
+    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    b.backgroundColor = [UIColor colorWithPatternImage:image];
+    [self addSubview:b];
+    [b setCenter:CGPointMake(rand() % (int)(bounds.size.width * .8), rand() % (int)(bounds.size.height * .8))];
+    while([self isOverlapping:b])
+        [b setCenter:CGPointMake(rand() % (int)(bounds.size.width * .8), rand() % (int)(bounds.size.height * .8))];
+    [bricks addObject:b];
+}
+
+-(void)moveBricks:(float)jumperY{
+    CGRect bounds = [self bounds];
+    for (int i=0; i < [bricks count]; i++)
+    {
+        Brick *brick = [bricks objectAtIndex:i];
+        CGRect bFrame = [brick frame];
+        //CGRect movedFrame = CGRectMake([brick center].x,[brick center].y+jumperY , bFrame.size.width,bFrame.size.height);
+        if((bFrame.origin.y+bFrame.size.height)+jumperY < bounds.size.height )
+            [brick setCenter:CGPointMake([brick center].x, [brick center].y+jumperY)];
+        else{
+            [brick removeFromSuperview];
+            [bricks removeObject:brick];
+            [self addBrick];
+        }
+
+    }
+}
+
+-(BOOL)isOverlapping:(Brick*) brick{
+    CGRect theFrame = [brick frame];
+    //CGRect movedFrame = CGRectMake([brick center].x,[brick center].y, theFrame.size.width,theFrame.size.height);
+    for (int i=0; i < [bricks count]; i++){
+        Brick *otherBrick = [bricks objectAtIndex:i];
+        CGRect otherFrame = [otherBrick frame];
+        if(brick != otherBrick && CGRectIntersectsRect(theFrame, otherFrame))
+            return true;
+    }
+    return false;
+}
+
+/*-(BOOL)isMoveOverlapping:(CGRect) bFrame{
+    //CGRect theFrame = [brick frame];
+    //CGRect movedFrame = CGRectMake([brick center].x,[brick center].y, theFrame.size.width,theFrame.size.height);
+    for (int i=0; i < [bricks count]; i++){
+        CGRect otherFrame = [[bricks objectAtIndex:i] frame];
+        if(CGRectIntersectsRect(bFrame, otherFrame))
+            return true;
+    }
+    return false;
+}*/
+
+
 -(void)arrange:(CADisplayLink *)sender
 {
-    
     //CFTimeInterval ts = [sender timestamp];
     
     CGRect bounds = [self bounds];
@@ -94,8 +164,14 @@ NSInteger counter;
     // add a positive velocity to move him
     if (p.y > bounds.size.height)
     {
-        [jumper setDy:10];
-        p.y = bounds.size.height;
+        if(_infinite){
+            [jumper setDy:10];
+            p.y = bounds.size.height;
+        }
+        else{
+            NSLog(@"GG");
+            [sender invalidate];
+        }
     }
     
     // If we've gone past the top of the screen, wrap around
@@ -112,29 +188,23 @@ NSInteger counter;
     // a jump to push us up.
     if ([jumper dy] < 0)
     {
-        for (Brick *brick in bricks)
+        for (int i=0; i < [bricks count]; i++)
         {
-            CGRect b = [brick frame];
+            CGRect b = [[bricks objectAtIndex:i] frame];
             if (CGRectContainsPoint(b, p))
             {
                 // Yay!  Bounce!
                 NSLog(@"Bounce!");
                 [jumper setDy:10];
+                [self moveBricks:p.y];
+                _currentScore += p.y/5;
+                [self updateScore];
             }
         }
     }
     [jumper setCenter:p];
-    if(counter % 60 == 0){
-    for (Brick *brick in bricks)
-    {
-        CGRect b = [brick bounds];
-        //:CGPointMake(b.origin.x+b.size.width/2, b.origin.y-10)];
-        //[brick s];
-        [brick setBounds:CGRectMake(b.origin.x, b.origin.y-10, b.size.width, b.size.height)];
-        NSLog(@"%@ Location1 %f %f",brick, b.origin.x+b.size.width/2,b.origin.y);
-         NSLog(@"%@ Location2 %f %f", brick, b.origin.x+b.size.width/2,b.origin.y-10);
-        //[self addSubview:brick];
-    }
+    if(counter % 15 == 0){
+       [self moveBricks:8];
     }
     // NSLog(@"Timestamp %f", ts);
     counter++;
