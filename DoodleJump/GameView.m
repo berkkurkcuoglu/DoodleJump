@@ -5,7 +5,7 @@
 //  Created by berk on 2/9/17.
 //  Copyright © 2017 berk. All rights reserved.
 //
-
+#import <AudioToolbox/AudioServices.h>
 #import "GameView.h"
 
 
@@ -40,8 +40,8 @@ NSInteger counter;
     {
         CGRect bounds = [self bounds];
         
-        jumper = [[Doodle alloc] initWithFrame:CGRectMake(bounds.size.width/2, bounds.size.height - 20, 20, 20)];
-        [jumper setBackgroundColor:[UIColor redColor]];
+        jumper = [[Doodle alloc] initWithFrame:CGRectMake(bounds.size.width/2, bounds.size.height/2, 20, 20)];
+        [jumper setBackgroundColor:[UIColor colorWithRed:153.0/255.0 green:254.0/255.0 blue:0/255.0 alpha:0.6]];
         [jumper setDx:0];
         [jumper setDy:10];
         [self addSubview:jumper];
@@ -103,9 +103,11 @@ NSInteger counter;
     {
         Brick *brick = [bricks objectAtIndex:i];
         CGRect bFrame = [brick frame];
-        //CGRect movedFrame = CGRectMake([brick center].x,[brick center].y+jumperY , bFrame.size.width,bFrame.size.height);
-        if((bFrame.origin.y+bFrame.size.height)+jumperY < bounds.size.height )
-            [brick setCenter:CGPointMake([brick center].x, [brick center].y+jumperY)];
+        CGRect movedFrame = CGRectMake([brick center].x,[brick center].y+jumperY , bFrame.size.width,bFrame.size.height);
+        if((bFrame.origin.y+bFrame.size.height)+jumperY < bounds.size.height ){
+            if(![self isMoveOverlapping:movedFrame:brick])
+                [brick setCenter:CGPointMake([brick center].x, [brick center].y+jumperY)];
+        }
         else{
             [brick removeFromSuperview];
             [bricks removeObject:brick];
@@ -127,16 +129,17 @@ NSInteger counter;
     return false;
 }
 
-/*-(BOOL)isMoveOverlapping:(CGRect) bFrame{
+-(BOOL)isMoveOverlapping:(CGRect) bFrame :(Brick*) brick{
     //CGRect theFrame = [brick frame];
     //CGRect movedFrame = CGRectMake([brick center].x,[brick center].y, theFrame.size.width,theFrame.size.height);
     for (int i=0; i < [bricks count]; i++){
-        CGRect otherFrame = [[bricks objectAtIndex:i] frame];
-        if(CGRectIntersectsRect(bFrame, otherFrame))
+        Brick *otherBrick = [bricks objectAtIndex:i];
+        CGRect otherFrame = [otherBrick frame];
+        if(brick != otherBrick && CGRectIntersectsRect(bFrame, otherFrame))
             return true;
     }
     return false;
-}*/
+}
 
 
 -(void)arrange:(CADisplayLink *)sender
@@ -169,7 +172,12 @@ NSInteger counter;
             p.y = bounds.size.height;
         }
         else{
-            NSLog(@"GG");
+            //NSLog(@"GG");
+            NSString *path  = [[NSBundle mainBundle] pathForResource:@"blip" ofType:@"wav"];
+            NSURL *pathURL = [NSURL fileURLWithPath : path];
+            SystemSoundID audioEffect;
+            AudioServicesCreateSystemSoundID((__bridge CFURLRef) pathURL, &audioEffect);
+            AudioServicesPlaySystemSound(audioEffect);
             [sender invalidate];
         }
     }
@@ -194,7 +202,7 @@ NSInteger counter;
             if (CGRectContainsPoint(b, p))
             {
                 // Yay!  Bounce!
-                NSLog(@"Bounce!");
+                //NSLog(@"Bounce!");
                 [jumper setDy:10];
                 [self moveBricks:p.y];
                 _currentScore += p.y/5;

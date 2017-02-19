@@ -22,7 +22,10 @@
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();    
     self.view.backgroundColor = [UIColor colorWithPatternImage:image];
-    
+    _dyingButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    _dyingButton.titleLabel.minimumScaleFactor = 0.4;
+    _inifiniteButton.titleLabel.adjustsFontSizeToFitWidth = YES;
+    _inifiniteButton.titleLabel.minimumScaleFactor = 0.4;
 }
 
 - (void)didReceiveMemoryWarning {

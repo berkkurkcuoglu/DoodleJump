@@ -10,4 +10,7 @@
 
 @interface ViewController1 : UIViewController
 
+@property (strong, nonatomic) IBOutlet UIButton *dyingButton;
+@property (strong, nonatomic) IBOutlet UIButton *inifiniteButton;
+
 @end
