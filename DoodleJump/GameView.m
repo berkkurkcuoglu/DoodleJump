@@ -39,13 +39,13 @@ NSInteger counter;
     if (self)
     {
         CGRect bounds = [self bounds];
-        
-        jumper = [[Doodle alloc] initWithFrame:CGRectMake(bounds.size.width/2, bounds.size.height/2, 20, 20)];
+        jumper = [[Doodle alloc] initWithFrame:CGRectMake(bounds.size.width/2, bounds.size.height, 20, 20)];
         [jumper setBackgroundColor:[UIColor colorWithRed:153.0/255.0 green:254.0/255.0 blue:0/255.0 alpha:0.6]];
         [jumper setDx:0];
         [jumper setDy:10];
         [self addSubview:jumper];
-        [self makeBricks:nil];
+        [self makeBricks];
+        [self protectBricks];
     }
     return self;
 }
@@ -61,51 +61,62 @@ NSInteger counter;
     [_scoreLabel setText:[NSString stringWithFormat:@"Score: %ld",_currentScore]];
     [_highScoreLabel setText:[NSString stringWithFormat:@"Best: %ld",_highScore]];
 }
--(IBAction)makeBricks:(id)sender
-{
-    //CGRect bounds = [self bounds];
-    //float width = bounds.size.width * .2;
-    //float height = 20;
-    if (bricks)
+
+//place 5 bricks to bottom at the beginning to avoid instant dead
+-(void)protectBricks{
+    for (int i = 0; i < 5; ++i)
     {
-        for (Brick *brick in bricks)
-        {
-            [brick removeFromSuperview];
-        }
-    }
-    
-    bricks = [[NSMutableArray alloc] init];
-    for (int i = 0; i < 12; ++i)
-    {
-        [self addBrick];
+        CGRect bounds = [self bounds];
+        Brick *b = [[Brick alloc] initWithFrame:CGRectMake(0, 0,(int)(bounds.size.width * .25), 20)];
+        //[b setBackgroundColor:[UIColor colorWithRed:153.0/255.0 green:254.0/255.0 blue:0/255.0 alpha:1.0]];
+        UIGraphicsBeginImageContext(b.frame.size);
+        [[UIImage imageNamed:@"doodie.png"] drawInRect:b.frame];
+        UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        b.backgroundColor = [UIColor colorWithPatternImage:image];
+        [self addSubview:b];
+        [b setCenter:CGPointMake((int)(bounds.size.width * .2 * (i+1)), (int)(bounds.size.height * .95))];
+        [bricks addObject:b];
     }
 }
-
+//create bricks total 12
+-(void)makeBricks
+{
+    if (bricks)
+        for (Brick *brick in bricks)
+            [brick removeFromSuperview];
+    
+    bricks = [[NSMutableArray alloc] init];
+    
+    for (int i = 0; i < 7; ++i)
+        [self addBrick];
+    
+}
+//method to add a single brick
 -(void)addBrick{
     CGRect bounds = [self bounds];
-    Brick *b = [[Brick alloc] initWithFrame:CGRectMake(0, 0,(int)(bounds.size.width * .2), 20)];
-    //[b setBackgroundColor:[UIColor colorWithRed:153.0/255.0 green:254.0/255.0 blue:0/255.0 alpha:1.0]];
+    Brick *b = [[Brick alloc] initWithFrame:CGRectMake(0, 0,(int)(bounds.size.width * .25), 20)];
     UIGraphicsBeginImageContext(b.frame.size);
     [[UIImage imageNamed:@"doodie.png"] drawInRect:b.frame];
     UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     b.backgroundColor = [UIColor colorWithPatternImage:image];
     [self addSubview:b];
-    [b setCenter:CGPointMake(rand() % (int)(bounds.size.width * .8), rand() % (int)(bounds.size.height * .8))];
+    [b setCenter:CGPointMake(rand() % (int)(bounds.size.width * .85), rand() % (int)(bounds.size.height * .65))];
     while([self isOverlapping:b])
-        [b setCenter:CGPointMake(rand() % (int)(bounds.size.width * .8), rand() % (int)(bounds.size.height * .8))];
+        [b setCenter:CGPointMake(rand() % (int)(bounds.size.width * .85), rand() % (int)(bounds.size.height * .65))];
     [bricks addObject:b];
 }
-
+//method to move bricks
 -(void)moveBricks:(float)jumperY{
     CGRect bounds = [self bounds];
+    //bricks array need to be sorted to avoid unit collision (ones closer to bottom moves first)
+    bricks = [NSMutableArray arrayWithArray:[self brickSort:bricks]];
     for (int i=0; i < [bricks count]; i++)
     {
         Brick *brick = [bricks objectAtIndex:i];
         CGRect bFrame = [brick frame];
-        CGRect movedFrame = CGRectMake([brick center].x,[brick center].y+jumperY , bFrame.size.width,bFrame.size.height);
         if((bFrame.origin.y+bFrame.size.height)+jumperY < bounds.size.height ){
-            if(![self isMoveOverlapping:movedFrame:brick])
                 [brick setCenter:CGPointMake([brick center].x, [brick center].y+jumperY)];
         }
         else{
@@ -113,13 +124,11 @@ NSInteger counter;
             [bricks removeObject:brick];
             [self addBrick];
         }
-
     }
 }
-
+//method to check if a brick is overlapping with another one
 -(BOOL)isOverlapping:(Brick*) brick{
-    CGRect theFrame = [brick frame];
-    //CGRect movedFrame = CGRectMake([brick center].x,[brick center].y, theFrame.size.width,theFrame.size.height);
+    CGRect theFrame = [brick frame];    
     for (int i=0; i < [bricks count]; i++){
         Brick *otherBrick = [bricks objectAtIndex:i];
         CGRect otherFrame = [otherBrick frame];
@@ -128,24 +137,50 @@ NSInteger counter;
     }
     return false;
 }
-
--(BOOL)isMoveOverlapping:(CGRect) bFrame :(Brick*) brick{
-    //CGRect theFrame = [brick frame];
-    //CGRect movedFrame = CGRectMake([brick center].x,[brick center].y, theFrame.size.width,theFrame.size.height);
-    for (int i=0; i < [bricks count]; i++){
-        Brick *otherBrick = [bricks objectAtIndex:i];
-        CGRect otherFrame = [otherBrick frame];
-        if(brick != otherBrick && CGRectIntersectsRect(bFrame, otherFrame))
-            return true;
+//bricksort = mergesort according to y coordinate of bricks
+-(NSArray *)brickSort:(NSArray *)unsortedArray
+{
+    if ([unsortedArray count] < 2)
+    {
+        return unsortedArray;
     }
-    return false;
+    long middle = ([unsortedArray count]/2);
+    NSRange left = NSMakeRange(0, middle);
+    NSRange right = NSMakeRange(middle, ([unsortedArray count] - middle));
+    NSArray *rightArr = [unsortedArray subarrayWithRange:right];
+    NSArray *leftArr = [unsortedArray subarrayWithRange:left];
+    //Or iterate through the unsortedArray and create your left and right array
+    //for left array iteration starts at index =0 and stops at middle, for right array iteration starts at midde and end at the end of the unsorted array
+    NSArray *resultArray =[self merge:[self brickSort:leftArr] andRight:[self brickSort:rightArr]];
+    return resultArray;
 }
-
+//merge sort is from http://www.knowstack.com/sorting-algorithms-in-objective-c/
+-(NSArray *)merge:(NSArray *)leftArr andRight:(NSArray *)rightArr
+{
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    int right = 0;
+    int left = 0;
+    while (left < [leftArr count] && right < [rightArr count])
+    {
+        if ([[leftArr objectAtIndex:left] center].y > [[rightArr objectAtIndex:right] center].y)
+        {
+            [result addObject:[leftArr objectAtIndex:left++]];
+        }
+        else
+        {
+            [result addObject:[rightArr objectAtIndex:right++]];
+        }
+    }
+    NSRange leftRange = NSMakeRange(left, ([leftArr count] - left));
+    NSRange rightRange = NSMakeRange(right, ([rightArr count] - right));
+    NSArray *newRight = [rightArr subarrayWithRange:rightRange];
+    NSArray *newLeft = [leftArr subarrayWithRange:leftRange];
+    newLeft = [result arrayByAddingObjectsFromArray:newLeft];
+    return [newLeft arrayByAddingObjectsFromArray:newRight];
+}
 
 -(void)arrange:(CADisplayLink *)sender
 {
-    //CFTimeInterval ts = [sender timestamp];
-    
     CGRect bounds = [self bounds];
     
     // Apply gravity to the acceleration of the jumper
@@ -184,7 +219,7 @@ NSInteger counter;
     
     // If we've gone past the top of the screen, wrap around
     if (p.y < 0)
-        p.y += bounds.size.height;
+        p.y += bounds.size.height * 0.8;
     
     // If we have gone too far left, or too far right, wrap around
     if (p.x < 0)
@@ -203,8 +238,9 @@ NSInteger counter;
             {
                 // Yay!  Bounce!
                 //NSLog(@"Bounce!");
+                [jumper setDx:0];
                 [jumper setDy:10];
-                [self moveBricks:p.y];
+                [self moveBricks:10];
                 _currentScore += p.y/5;
                 [self updateScore];
             }
@@ -212,9 +248,8 @@ NSInteger counter;
     }
     [jumper setCenter:p];
     if(counter % 15 == 0){
-       [self moveBricks:8];
+       [self moveBricks:10];
     }
-    // NSLog(@"Timestamp %f", ts);
     counter++;
 }
 
